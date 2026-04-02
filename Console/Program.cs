@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Console
@@ -14,9 +11,19 @@ namespace Console
         [STAThread]
         static void Main()
         {
+            // main loop
+            // application init
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
+
+
+
         }
+
+         
+           
+
+
     }
 }
