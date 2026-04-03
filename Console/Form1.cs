@@ -25,7 +25,7 @@ namespace Console
         int traverse = 0;
         
 
-        string GetHistoryPath()
+        string GetHistoryPath() //to grab the history file, for our dynamic history look up using arrow keys
         {
             string tmp = Environment.GetEnvironmentVariable("APPDATA");
 
@@ -52,7 +52,7 @@ namespace Console
 
         }
 
-        private void init()
+        private void init() // we initialize the db folder in APPDATA
         {
             if (Directory.Exists(Path.Combine(GetHistoryPath(),"db")))
             {
@@ -101,7 +101,7 @@ namespace Console
             }
         }
 
-        bool isInSyntax(string input)
+        bool isInSyntax(string input) // this is probably abit unneeded but we'll keep it for now, to accurately check if its a syntax in live logging
         {
             var tmp = input.Split(' ');
 
@@ -116,7 +116,7 @@ namespace Console
             return false;
         }
 
-        private void ReadHistory()
+        private void ReadHistory() // Read from file then store the contents in a map
         {
             string historyPath = Path.Combine(GetHistoryPath(), "db", "history.txt");
             if (File.Exists(historyPath))
@@ -139,18 +139,18 @@ namespace Console
         DirectoryInfo currentDirectory = new DirectoryInfo(Environment.GetEnvironmentVariable("USERPROFILE"));
 
 
-        void print(string text)
+        void print(string text) // so I dont have to  manually type that long ass code
         {
             rtb_output.Text += text + Environment.NewLine;
         }
 
-        private void WriteHistory(string command)
+        private void WriteHistory(string command) // Store user input to the history file, so we have a functional history system
         {
             string historyPath = Path.Combine(GetHistoryPath(), "db", "history.txt");
-            File.AppendAllText(historyPath, command + Environment.NewLine);
+            File.AppendAllText(historyPath, command + Environment.NewLine); // we always append new text other wise its all going to be stored in one line
         }
 
-        private void btn_submit_Click(object sender, EventArgs e)
+        private void btn_submit_Click(object sender, EventArgs e) //this is where it all happens, the main loop is called, then the input gets evaluated
         {
             input = tb_input1.Text;   
             WriteHistory(input);
@@ -159,7 +159,7 @@ namespace Console
             tb_input1.Text = string.Empty;
         }
 
-        private void help()
+        private void help() //for user convenience
         {
             print("Available Commands:");
             print("echo <text> - Prints the text to the console.");
@@ -176,7 +176,7 @@ namespace Console
             print("exit - Exits the application.");
         }
 
-        private bool IsEnvVar(string input)
+        private bool IsEnvVar(string input) //this is our env var checker to make sure that the said token is actually a valid env var
         {
             if (input.StartsWith("%") && input.EndsWith("%")) {
                 string envar = input.Trim('%');
@@ -187,7 +187,7 @@ namespace Console
             return false;
         }
 
-        private void evaluate(string input)
+        private void evaluate(string input) //yep i know its simple but it works! =P
         {
             correct = isInSyntax(input);
 
@@ -206,7 +206,7 @@ namespace Console
             line++;
         }
 
-        private void setArray(ref string[] array)
+        private void setArray(ref string[] array) // this is to set up users input, incase there is some env var
         {
             for (int i = 0; i < array.Length; i++)
             {
@@ -217,13 +217,14 @@ namespace Console
             }
         }
 
-        private void mainLoop()
+        private void mainLoop() //this is slowly becoming a god function, I must do something about it.
         {
             try
             {
-                string[] cmd = input.Split(' ');
+                string[] cmd = input.Split(' '); //our simple tokenizer
 
                 setArray(ref cmd);
+                // And this is the start of our long ass if else command Evaluator
                 if (cmd[0].ToLower() == "echo")
                 {
                     string output = string.Join(" ", cmd.Skip(1));
@@ -507,9 +508,9 @@ namespace Console
 
                     print("Environment variable set!");
 
-                }else if (cmd[0] == "edit")
+                }else if (cmd[0] == "edit") // if user wants to edit a text file, we call our text editor 
                 {
-                    if(cmd.Length< 2)
+                    if(cmd.Length< 2) //if empty we'll just use the current path, and let the user manually "Save As" other wise, they can use the Save option
                     {
                         Editior ed = new Editior(string.Empty);
                         ed.Show();
