@@ -1,4 +1,6 @@
 <Solution>
   <Project Path="Console/Console.csproj" Id="8d84e5d9-d891-4b16-97eb-f52b4a7e40c6" />
-  <Project Path="ConsoleInstaller/ConsoleInstaller.vdproj" Type="Installer" />
+  <Project Path="ConsoleInstaller/ConsoleInstaller.vdproj" Type="Installer">
+    <Build />
+  </Project>
 </Solution>

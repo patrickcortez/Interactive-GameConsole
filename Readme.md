@@ -1,16 +1,23 @@
 # Console Explorer
 
 **Console Explorer** is a *C#* application made in Visual Studio.
-It's sole purpose is to navigate and manage your file system with its
+It's sole purpose is to navigate and manage your file system with its basic
 built-in Command-Line interface.
 
-**CE** has a-lot of built-in commands: `current`,`change`,`create`,`copy`,`clear`,`delete`,`echo`,`exit`,`export`,`help`,`list`,`move`.
+**CE** has a-lot of built-in commands: `current`,`change`,`create`,`copy`,`clear`,`delete`,`echo`,`exit`,`export`,`help`,`list`,`move`,`edit`.
 
 With those commands, you can freely navigate and manage your File-System with ease.
-**CE** also has live logging where you can see if the command you entered is valid or not, and
-History persistence so you can see all the commands you entered and shuffle between them using
-up and down arrow keys, also it has environmental variable expansion, so you can export and use
+**CE** also has other features like:
+
+*Live logging* where you can see if the command you entered is valid or not.
+
+*History Persistence* so you can see all the commands you entered and shuffle between them using
+up and down arrow keys.
+
+It also has *environmental variable expansion*, so you can export and use
 your variables in any command with ease.
+
+finally it has its own *Text Editor*, so you can edit text files instantly while using Console Explorer.
 
 ---
 

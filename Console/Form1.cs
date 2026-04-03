@@ -19,9 +19,11 @@ namespace Console
         List<string> history = new List<string>();
         List<string> syntax = new List<string>();
         Dictionary<int, char> log = new Dictionary<int, char>();
+        
         int line = 1;
         bool correct = false;
         int traverse = 0;
+        
 
         string GetHistoryPath()
         {
@@ -34,6 +36,7 @@ namespace Console
 
             return AppDomain.CurrentDomain.BaseDirectory;
         }
+
 
         string GetAssetsFolder()
         {
@@ -76,7 +79,7 @@ namespace Console
                 ReadHistory();
                 lb_path.Text = currentDirectory.FullName;
                 rtb_log.Text += "CLI" + Environment.NewLine + "Logs:" + Environment.NewLine;
-                rtb_output.Text = "Welcome to File System Console" + Environment.NewLine;
+                rtb_output.Text = "Welcome to Console Explorer" + Environment.NewLine;
                 rtb_output.Text += "Type 'help' to begin exploring!" + Environment.NewLine + Environment.NewLine;
                 string[] cmds = { "echo", "exit", "copy", "create", "move", "export", "delete", "clear", "change", "list", "current", "help" };
                 syntax.AddRange(cmds);
@@ -169,6 +172,7 @@ namespace Console
             print("copy <src> <dest> - copies a file/folder to a destination");
             print("move <src> <dest> - moves a file/folder to a destination");
             print("export <var>=<value> - exports env var.");
+            print("edit <file-path> - edit any text files.");
             print("exit - Exits the application.");
         }
 
@@ -503,6 +507,33 @@ namespace Console
 
                     print("Environment variable set!");
 
+                }else if (cmd[0] == "edit")
+                {
+                    if(cmd.Length< 2)
+                    {
+                        Editior ed = new Editior(string.Empty);
+                        ed.Show();
+                        return;
+                    }
+
+                    string npath;
+
+                    if (Path.IsPathRooted(cmd[1]))
+                    {
+                        npath = cmd[1];
+                    }
+                    else
+                    {
+                        npath = Path.Combine(currentDirectory.FullName, cmd[1]);
+                    }
+
+                    if (File.Exists(npath))
+                    {
+
+                        Editior ed = new Editior(npath);
+                        ed.Show();
+                    }
+
                 }
                 else
                 {
@@ -570,5 +601,7 @@ namespace Console
                 }
             }
         }
+
+
     }
 }
