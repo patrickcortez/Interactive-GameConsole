@@ -19,7 +19,9 @@ namespace Console
         List<string> history = new List<string>();
         List<string> syntax = new List<string>();
         Dictionary<int, char> log = new Dictionary<int, char>();
-        
+        Dictionary<string, Action> commands = new Dictionary<string, Action>();
+        string[] delgate;
+         
         int line = 1;
         bool correct = false;
         int traverse = 0;
@@ -43,7 +45,7 @@ namespace Console
             string assets = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets");
             if (!Directory.Exists(assets))
             {
-                MessageBox.Show("Assets Folder Missing!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                print("Warning: " + "Asset Folder is Missing!");
                 return string.Empty;
             }
 
@@ -83,7 +85,7 @@ namespace Console
                 rtb_output.Text += "Type 'help' to begin exploring!" + Environment.NewLine + Environment.NewLine;
                 string[] cmds = { "echo", "exit", "copy", "create", "move", "export", "delete", "clear", "change", "list", "current", "help" };
                 syntax.AddRange(cmds);
-
+   
                 var assets = GetAssetsFolder();
 
                 if (!string.IsNullOrEmpty(assets))
@@ -93,7 +95,7 @@ namespace Console
                 }
                 else
                 {
-                    MessageBox.Show("Icon file missing, Reverting to default...", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    print("Warning: Icon File is missing!");
                 }
             }catch(Exception ex)
             {
@@ -133,6 +135,20 @@ namespace Console
             {
                 print("Failed to read history");
             }
+        }
+
+        private bool isExtra(string inp)
+        {
+            var tmp = inp.Split(' ');
+            foreach (var key in commands.Keys)
+            {
+                if (key == tmp[0])
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         string input = string.Empty;
@@ -189,7 +205,7 @@ namespace Console
 
         private void evaluate(string input) //yep i know its simple but it works! =P
         {
-            correct = isInSyntax(input);
+            correct = isInSyntax(input) || isExtra(input);
 
             if(correct == true)
             {
@@ -215,6 +231,26 @@ namespace Console
                     array[i] = Environment.ExpandEnvironmentVariables(array[i]);
                 }
             }
+        }
+
+        List<Delegate> Acts() //for sending methods to Commands.cs so this file doesnt become a god file,
+        {
+            List<Delegate> tmp = new List<Delegate>();
+            tmp.Add(new Action<string>(s => print(s)));
+            return tmp; 
+        }
+
+        private void MapInit(Commands comd) // Initializer for future commands
+        { // This is where we put our future commands in, by adding them to the Dict
+            //test commands
+            commands.Add("Test",comd.Test);
+            commands.Add("input", comd.TestInput);
+
+        }
+
+        private void mainMap(string inp) // Our command executor for other commands
+        {
+            commands[inp]();
         }
 
         private void mainLoop() //this is slowly becoming a god function, I must do something about it.
@@ -538,12 +574,25 @@ namespace Console
                 }
                 else
                 {
-                    print("Unknown Command: " + cmd[0]);
-                    correct = false;
+                    bool hasexec = false;
+                    Commands comd = new Commands(Acts(),hasexec,cmd);
+
+                    commands.Clear();
+                    MapInit(comd);
+                    
+
+                    mainMap(cmd[0]);
+
+                    if (comd.getexec() == false)
+                    {
+                        print("Unknown Command: " + cmd[0]);
+                        correct = false;
+                    }
                 }
             }catch(Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                print("Error: " + ex.Message);
             }
         }
 

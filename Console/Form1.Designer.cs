@@ -109,12 +109,11 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.TextBox tb_input1;
-        private System.Windows.Forms.RichTextBox rtb_output;
         private System.Windows.Forms.Button btn_submit;
-        private System.Windows.Forms.Label lb_path;
         private System.Windows.Forms.RichTextBox rtb_log;
+        internal System.Windows.Forms.Label lb_path;
+        internal System.Windows.Forms.RichTextBox rtb_output;
+        internal System.Windows.Forms.TextBox tb_input1;
     }
 }
 

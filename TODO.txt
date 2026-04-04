@@ -1,0 +1,19 @@
+TODO's:
+
+- Change the access specifiers of each controls: private to internal.
+- Move all commands to Command Class(Command.cs):
+	- echo
+	- exit
+	- edit
+	- clear X
+	- copy
+	- move
+	- delete
+	- create
+	- change
+	- list
+	
+- Make the Command Mapper and replace the if else chain.
+
+Note: 
+Yep I need to move 12 fucking commands inside Form1. T_T, FUUUUUUHHHHHHHHHH.
