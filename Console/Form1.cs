@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
@@ -572,6 +573,7 @@ namespace Console
 
                     if (File.Exists(src))
                     {
+                        dest = Path.Combine(dest, Path.GetFileName(src));
                         File.Copy(src, dest);
                         print("Copy: " + cmd[1] + " to " + cmd[2] + " copy successful!");
                     }
@@ -584,7 +586,7 @@ namespace Console
                 else if (cmd[0].ToLower() == "move")
                 {
                     string src;
-                    string desc;
+                    string dest;
 
                     if (Path.IsPathRooted(cmd[1]))
                     {
@@ -597,17 +599,18 @@ namespace Console
 
                     if (Path.IsPathRooted(cmd[2]))
                     {
-                        desc = cmd[2];
+                        dest = cmd[2];
                     }
                     else
                     {
-                        desc = Path.Combine(currentDirectory.FullName, cmd[2]);
+                        dest = Path.Combine(currentDirectory.FullName, cmd[2]);
                     }
 
 
                     if (File.Exists(src))
                     {
-                        File.Move(src, desc);
+                        dest = Path.Combine(dest, Path.GetFileName(src));
+                        File.Move(src, dest);
                         print("Move: " + cmd[1] + " to " + cmd[2] + " move successful!");
 
                     }
