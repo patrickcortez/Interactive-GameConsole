@@ -8,18 +8,7 @@ namespace Console
 {
     internal static class Utility
     {
-        public static string handleQoute(string[] arr)
-        {
-            string tmp = string.Empty;
 
-            if (arr[0].Contains('\"'))
-            {
-                tmp = string.Join(" ", arr.Skip(1));
-                tmp = tmp.Trim('\"');
-            }
-
-            return tmp;
-        }
 
         public static string[] TokenizeString(string input) // this is our new tokenizer, that handles qoutes by using a boolean to check each character for qoutes
         {
@@ -36,7 +25,7 @@ namespace Console
                 }
                 
                 if(c == ' ' && !isQoutes) // once we reach an empty space that isnt a qoute we finally add the 'word' to our list and clear the string builder
-                {
+                { //this is also extensible for later
                     if(word.Length > 0) // our guard clause 
                     {
                         Tokens.Add(word.ToString());

@@ -17,7 +17,8 @@ up and down arrow keys.
 It also has *environmental variable expansion*, so you can export and use
 your variables in any command with ease.
 
-finally it has its own *Text Editor*, so you can edit text files instantly while using Console Explorer.
+it has its own *Text Editor* and *Image Viewer*, so you can edit text files and view images instantly 
+while using **Console Explorer**.
 
 ---
 

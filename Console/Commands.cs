@@ -124,11 +124,6 @@ namespace Console
             {
                 string path = string.Join(" ", cmds.Skip(1));
 
-                if (cmds[1].Contains('"'))
-                {
-                    Utility.handleQoute(cmds);
-                }
-
 
 
                 if (Path.IsPathRooted(path))
