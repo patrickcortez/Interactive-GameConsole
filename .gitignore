@@ -366,3 +366,4 @@ FodyWeavers.xsd
 Console\Console\CommandLine.cs
 Console\Console\CommandLine.Designer.cs
 Console\Console\CommandLine.resx
+/Console/Syntax.md
