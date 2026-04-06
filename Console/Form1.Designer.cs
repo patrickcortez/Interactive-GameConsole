@@ -41,6 +41,7 @@
             this.tb_input1.Name = "tb_input1";
             this.tb_input1.Size = new System.Drawing.Size(648, 22);
             this.tb_input1.TabIndex = 0;
+            this.tb_input1.TextChanged += new System.EventHandler(this.tb_input1_TextChanged);
             this.tb_input1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_input1_KeyDown);
             // 
             // rtb_output

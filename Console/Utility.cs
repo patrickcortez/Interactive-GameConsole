@@ -6,6 +6,7 @@ using System.Text;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Net.NetworkInformation;
 
 namespace Console
 {
@@ -30,27 +31,43 @@ namespace Console
 
     internal static class Utility
     {
+        /*
+         * This class is purely for the utility of
+         * COnsole Explorer which is why all methods are static in this class.
+         * So the main stays clean.
+         */
 
-        public static void CopyDirectory(string source,string destination)
+
+        public static void CopyDirectory(string source,string destination,bool ranOnce = true) // Recursive Copy of Directories
         {
             try
             {
-                if (!Directory.Exists(destination))
+                if (ranOnce)
+                {
+                    DialogResult res = MessageBox.Show("Are you sure you want to proceed?", "Info", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                    if(res == DialogResult.No)
+                    {
+                        return;
+                    }
+                }
+
+                if (!Directory.Exists(source)) //if the source doesnt exist then we warn the user.
                 {
                     return;
                 }
 
-                DialogResult res = MessageBox.Show("Are you sure any duplicate file found in dest will be overwritten.", "warning", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-                if (res == DialogResult.No)
+                if (!Directory.Exists(destination)) //we automatically make every subdirectory in dest thats in source.
                 {
-                    return;
+                    Directory.CreateDirectory(destination);
                 }
 
+       
 
-                var dirs = new DirectoryInfo(source);
 
-                foreach (FileInfo file in dirs.GetFiles())
+                var dirs = new DirectoryInfo(source); // we grab all the info in the source directory 
+
+                foreach (FileInfo file in dirs.GetFiles()) // then copy all files and dir to dest
                 {
                     string tarpath = Path.Combine(destination, file.Name);
                     file.CopyTo(tarpath, true);
@@ -59,7 +76,8 @@ namespace Console
                 foreach (DirectoryInfo subdir in dirs.GetDirectories())
                 {
                     string ndir = Path.Combine(source, subdir.Name);
-                    CopyDirectory(ndir, destination);
+                    string ndes = Path.Combine(destination, subdir.Name);
+                    CopyDirectory(ndir, ndes,false); //repeat, with the ranOnce flag turned to false =D
                 }
 
             }catch(Exception ex)
@@ -111,6 +129,38 @@ namespace Console
             char flag = option.Trim(prefix)[0];
 
             return flag;
+        }
+
+        public static bool hasBraces(char inp)
+        {
+            char[] braces = { '{', '(', '[' };
+            bool found = false;
+
+            foreach(char c in braces)
+            {
+                if(inp == c)
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            return found;
+        }
+
+        public static char? matchBrace(char input)
+        {
+            Dictionary<char, char> Braces = new Dictionary<char, char>();
+            Braces.Add('(', ')');
+            Braces.Add('{', '}');
+            Braces.Add('[', ']');
+
+
+            if(!Braces.ContainsKey(input)){
+                return null;
+            }
+
+            return Braces[input];
         }
 
 

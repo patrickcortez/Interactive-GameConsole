@@ -420,10 +420,7 @@ namespace Console
                         return;
                     }
 
-                    if (cmd[1].Contains('"'))
-                    {
-                        handleQoute(cmd);
-                    }
+
 
                     var path = Path.Combine(currentDirectory.FullName, cmd[1]);
 
@@ -773,6 +770,37 @@ namespace Console
 
         private void Form1_Load(object sender, EventArgs e)
         {
+
+        }
+        bool modified = false;
+        private void tb_input1_TextChanged(object sender, EventArgs e)
+        {
+
+            try
+            {
+                if (tb_input1.Text == string.Empty)
+                {
+                    return;
+                }
+
+                foreach (char c in tb_input1.Text)
+                {
+                    if (Utility.hasBraces(c))
+                    {
+                        modified = !modified;
+                        break;
+                    }
+                }
+
+                if (modified)
+                {
+                    tb_input1.AppendText(Utility.matchBrace(tb_input1.Text.Last()).ToString());
+                    modified = !modified;
+                }
+            }catch(Exception ex)
+            {
+                print(ex.Message, true);
+            }
 
         }
     }
