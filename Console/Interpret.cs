@@ -22,7 +22,7 @@ namespace Console
         List<string> Lines = new List<string>();
         Dictionary<string, object> Variable = new Dictionary<string, object>(); //<varname>=<value:int or string>
         List<Delegate> cmds;
-        private string varin;
+        private List<string> varin = new List<string>();
 
         public Interpret(string File,List<Delegate> func)
         {
@@ -95,30 +95,25 @@ namespace Console
         }
 
 
-
-
         private bool hasVariable(string input)
         {
-            debug($"Input: {input}, | Varin: {varin}");
-            string[] tmp = input.Split(' ');
+ 
             bool found = false;
 
             if (Variable.Count > 0)
             {
-
-                foreach (string token in tmp)
+  
+                foreach (string token in varin)
                 {
 
-                    if (Variable.ContainsKey(varin))
+                    if (Variable.ContainsKey(token))
                     {
                         found = !found;
-                        debug("Found!");
+                       
                         break;
                     }
-                    else
-                    {
-                        debug("Not Found!");
-                    }
+ 
+
                 }
             }
 
@@ -134,7 +129,6 @@ namespace Console
                 return;
             }
             string[] cmds; //list of syntaxes in script
-            StringBuilder prevVar = new StringBuilder();
             
             foreach(string line in Lines)
             {
@@ -144,10 +138,9 @@ namespace Console
                 {
                     string tmp = cmds[0].Remove(0,6).Trim(')');
 
-                    
                     if (hasVariable(tmp))
                     {
-                        tmp = Utility.ReplaceWord(tmp, varin, Variable[varin].ToString(),'$');
+                        tmp = Utility.ReplaceWords(tmp, varin.ToArray(), Variable, '$');
                     }
 
                     print(tmp);
@@ -156,17 +149,17 @@ namespace Console
                 {
                     string varName = cmds[0].Remove(0, 6).Trim(')');
 
-                    varin = varName;
                     Variable[varName] = await InputAsync();
 
                     continue;
                 } else if (cmds[0].ToLower().Contains("var"))
                 {
                     string[] vars = cmds[1].Split('=');
+                    varin.Add(vars[0]);
                     if (vars[1] == "null") // so that we can have empty variables to be used in input
                     {
                        
-                        Variable.Add(vars[0], null);
+                        Variable.Add(vars[0], string.Empty);
                         continue;
                     }
                     Variable.Add(vars[0], vars[1]);

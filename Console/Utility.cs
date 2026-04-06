@@ -170,16 +170,27 @@ namespace Console
             return false;
         }
 
-        public static string ReplaceWord(string data,string oldWord,string newWord,char prefix)
+        public static string ReplaceWords(string data,string[] oldWords,Dictionary<string,object> newWords,char prefix)
         {
-            oldWord = string.Concat(prefix, oldWord);
-            StringBuilder nString = new StringBuilder(data);
-            if (data.Contains(oldWord))
+            List<string> nOldWords = new List<string>();
+
+            foreach(var word in oldWords)
             {
-                nString.Replace(oldWord, newWord);
+                nOldWords.Add(string.Concat(prefix, word));
+            }
+            
+            StringBuilder nString = new StringBuilder(data);
+
+            foreach(var word in nOldWords)
+            {
+                if (nString.ToString().Contains(word))
+                {
+                    nString.Replace(word, newWords[word.Remove(0,1)].ToString());
+                }
             }
 
             return nString.ToString();
+
         }
 
         
