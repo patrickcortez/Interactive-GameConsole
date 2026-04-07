@@ -72,6 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Arithmetic.cs" />
     <Compile Include="CommandLine.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -26,7 +26,7 @@ namespace Console
         }
     }
 
-    internal static class Utility
+    internal class Utility
     {
         /*
          * This class is purely for the utility of
@@ -77,7 +77,8 @@ namespace Console
                     CopyDirectory(ndir, ndes, false); //repeat, with the ranOnce flag turned to false =D
                 }
 
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -153,7 +154,8 @@ namespace Console
             Braces.Add('[', ']');
 
 
-            if (!Braces.ContainsKey(input)) {
+            if (!Braces.ContainsKey(input))
+            {
                 return null;
             }
 
@@ -170,22 +172,22 @@ namespace Console
             return false;
         }
 
-        public static string ReplaceWords(string data,string[] oldWords,Dictionary<string,object> newWords,char prefix)
+        public static string ReplaceWords(string data, string[] oldWords, Dictionary<string, object> newWords, char prefix)
         {
             List<string> nOldWords = new List<string>();
 
-            foreach(var word in oldWords)
+            foreach (var word in oldWords)
             {
                 nOldWords.Add(string.Concat(prefix, word));
             }
-            
+
             StringBuilder nString = new StringBuilder(data);
 
-            foreach(var word in nOldWords)
+            foreach (var word in nOldWords)
             {
                 if (nString.ToString().Contains(word))
                 {
-                    nString.Replace(word, newWords[word.Remove(0,1)].ToString());
+                    nString.Replace(word, newWords[word.Remove(0, 1)].ToString());
                 }
             }
 
@@ -193,7 +195,58 @@ namespace Console
 
         }
 
-        
+
+        public static int Strint(string data)
+        {
+            int value = 0;
+
+            for (int x = 0; x < data.Length; x++)
+            {
+                if (char.IsDigit(data.ElementAt(x)))
+                {
+                    value *= 10;
+                    value += (int)data[x] - '0'; // '0' is 48 in ASCII and '1' is 49... so 49 - 48 = 1 and so forth
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            return value;
+        }
+
+
+        public static List<int> getNumbers(string data)
+        {
+            int value = 0;
+            List<int> numbers = new List<int>();
+
+            for (int x = 0; x < data.Length; x++)
+            {
+                if (char.IsDigit(data.ElementAt(x)))
+                {
+                    value *= 10;
+                    value += ((int)data[x] - '0'); // '0' is 48 in ASCII and '1' is 49... so 49 - 48 = 1 and so forth
+                }
+                else
+                {
+                    if (value > 0)
+                    {
+                        numbers.Add(value);
+                    }
+                    value = 0;
+                    continue;
+                }
+            }
+
+            if (value > 0)
+            {
+                numbers.Add(value);
+            }
+
+            return numbers;
+        }
 
 
     }

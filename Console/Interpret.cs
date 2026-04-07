@@ -10,24 +10,63 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Channels;
 using System.Text;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Console
 {
 
-    internal class Interpret
+   internal class BenchMark //tried to make my own benchmarking but turns out there is already a StopWatch feature in Diagnostics!
+    { // Imma save this for future use.
+
+        Timer time;
+        private int seconds =0;
+
+        public BenchMark()
+        {
+            time = new Timer();
+
+            time.Interval = 1000;
+            time.Tick += countSeconds;
+
+            time.Start();
+        }
+
+
+
+        private void countSeconds(Object sender,EventArgs e) //Event for counting how many seconds this class instance ran
+        {
+            seconds++;
+        }
+
+        public int Stop() // stop benchmarking and return how many seconds has elapsed
+        {
+            time.Stop();
+            return seconds;
+        }
+    } // For now its unused.
+
+    internal class Interpret : IDisposable
     {
         string SFile; //Source File
         List<string> Lines = new List<string>();
         Dictionary<string, object> Variable = new Dictionary<string, object>(); //<varname>=<value:int or string>
         List<Delegate> cmds;
         private List<string> varin = new List<string>();
+        private List<String> syntax;
+        private bool success = false;
+        int seconds = 0;
+
+
 
         public Interpret(string File,List<Delegate> func)
         {
             SFile = File;
             cmds = new List<Delegate>(func);
+            syntax = new List<string>();
+            string[] syntaxes = { "print", "input", "var" };
+            syntax.AddRange(syntaxes);
             
             if (!BeginRead())
             {
@@ -44,12 +83,20 @@ namespace Console
         }
 
 
-        ~Interpret()
+         public void Dispose() // Clear all once the instace is done running.
         {
+            if (!success)
+            {
+                print($"Script: {SFile} failed to run!", true);
+            }
+
+            print($"Your script ran for {seconds} ms");
+
             Variable.Clear();
             cmds.Clear();
             Lines.Clear();
             SFile = string.Empty;
+
         }
 
            
@@ -120,7 +167,19 @@ namespace Console
             return found;
         }
 
-        
+        private string whichSyntax(string line)
+        {
+            foreach(string code in syntax)
+            {
+                if (line.Contains(code))
+                {
+                    return code;
+                }
+            }
+
+            return string.Empty;
+        }
+
 
         private async Task Evaluate() // to evaluate line by line.
         {
@@ -129,47 +188,60 @@ namespace Console
                 return;
             }
             string[] cmds; //list of syntaxes in script
-            
-            foreach(string line in Lines)
-            {
-                cmds = Utility.TokenizeString(line);
+            Stopwatch sW = new Stopwatch();
+            sW.Start();
 
-                if (cmds[0].ToLower().Contains("print")) //output
+                foreach (string line in Lines)
                 {
-                    string tmp = cmds[0].Remove(0,6).Trim(')');
+                    cmds = Utility.TokenizeString(line); // we first tokenize before we evaluate
+                    string synt = whichSyntax(cmds[0]); // grab the syntax in the line.
 
-                    if (hasVariable(tmp))
+
+                    if (synt.ToLower() == "print") //output
                     {
-                        tmp = Utility.ReplaceWords(tmp, varin.ToArray(), Variable, '$');
-                    }
+                        string tmp = cmds[0].Remove(0, 6).Trim(')');
 
-                    print(tmp);
-                    continue;
-                }else if (cmds[0].ToLower().Contains("input")) //input
-                {
-                    string varName = cmds[0].Remove(0, 6).Trim(')');
+                        if (hasVariable(tmp))
+                        {
+                            tmp = Utility.ReplaceWords(tmp, varin.ToArray(), Variable, '$');
+                        }
 
-                    Variable[varName] = await InputAsync();
-
-                    continue;
-                } else if (cmds[0].ToLower().Contains("var"))
-                {
-                    string[] vars = cmds[1].Split('=');
-                    varin.Add(vars[0]);
-                    if (vars[1] == "null") // so that we can have empty variables to be used in input
-                    {
-                       
-                        Variable.Add(vars[0], string.Empty);
+                        print(tmp);
                         continue;
                     }
-                    Variable.Add(vars[0], vars[1]);
-                    continue;
+                    else if (synt.ToLower() == "input") //input
+                    {
+                        string varName = cmds[0].Remove(0, 6).Trim(')');
+
+                        Variable[varName] = await InputAsync();
+
+                        continue;
+                    }
+                    else if (synt.ToLower() == "var")
+                    {
+                        string[] vars = cmds[1].Split('=');
+                        varin.Add(vars[0]);
+                        if (vars[1] == "null") // so that we can have empty variables to be used in input
+                        {
+
+                            Variable.Add(vars[0], string.Empty);
+                            continue;
+                        }
+                        Variable.Add(vars[0], vars[1]);
+                        continue;
+                    }
+                    else //if anything is wrong by ONE bit, we break evaluation.
+                    {
+                        print($"Syntax: {cmds[0]} is not valid!", true);
+                        sW.Stop();
+                        seconds = (int)sW.ElapsedMilliseconds;
+                        return;
+                    }
                 }
-                else
-                {
-                    print($"Syntax: {cmds[0]} is not valid!",true);
-                }
-            }
+
+            sW.Stop();
+            seconds = (int)sW.ElapsedMilliseconds;
+            success = true; // Finally we only return true once the script is done evaluating
 
         }
     }

@@ -176,9 +176,36 @@ namespace Console
 
  
 
-        internal bool getexec()
+        internal bool getexec() // A simple indicator that a command has successfully ran.
         {
             return hasexec;
+        }
+
+        public void Convert() // its abit misleading, this method just counts how many numbers by tokenizing the inputs digits.
+        {
+
+            int[] final = Utility.getNumbers(cmds[1]).ToArray(); // using our getNumbers in utility which is our digit tokenizer
+
+            print($"Original text: {cmds[1]}");
+            print("Numbers: ");
+
+            foreach(int nums in final) // then we print each one.
+            {
+                print(nums.ToString());
+            }
+
+            hasexec = true;
+        }
+
+        public void Math() // Our math handler
+        {
+
+            using (Arithmetic arith = new Arithmetic(cmds[1])) // we are using() so, we can use its Dispose() and clean up its members for the next instance.
+            {
+                print(arith.Begin().ToString());
+            }
+
+                hasexec = true;
         }
 
         

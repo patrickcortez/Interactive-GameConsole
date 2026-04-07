@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -15,7 +16,7 @@ namespace Console
         List<string> history = new List<string>();
         List<string> syntax = new List<string>();
         Dictionary<int, char> log = new Dictionary<int, char>();
-        Dictionary<string, Action> commands = new Dictionary<string, Action>();
+        Dictionary<string, Delegate> commands = new Dictionary<string, Delegate>();
         string username = Path.GetFileName(Environment.GetEnvironmentVariable("USERPROFILE"));
          
         int line = 1;
@@ -353,13 +354,11 @@ namespace Console
             commands.Add("test",comd.Test);
             commands.Add("input", comd.TestInput);
             commands.Add("view", comd.showImage);
+            commands.Add("numbers", comd.Convert);
+            commands.Add("math", comd.Math);
 
         }
 
-        public void WaitforInput()
-        {
-            
-        }
 
         private void mainMap(string inp) // Our command executor for other commands
         {
@@ -381,7 +380,17 @@ namespace Console
                 return;
             }
 
-            commands[inp]();
+            if (commands[inp].Method.ReturnType == typeof(void))
+            {
+                ParameterInfo[] param = commands[inp].Method.GetParameters();
+
+                string[] prms = Utility.TokenizeString(input);
+
+                if (param.Length < 1)
+                {
+                    ((Action)commands[inp])();
+                }
+            }
             
         }
 
@@ -752,11 +761,14 @@ namespace Console
                         ed.Show();
                     }
 
-                } else if (cmd[0].ToLower() == "run")
+                } else if (cmd[0].ToLower() == "run") // Running .csc scripts
                 {
                     string scriptPath = Path.Combine(currentDirectory.FullName, cmd[1]);
-                    Interpret inter = new Interpret(scriptPath,Acts());
-                    await inter.RunAsync();
+
+                    using (Interpret inter = new Interpret(scriptPath,Acts())) // Start the script and make sure our dispose() runs after execution
+                    {
+                        await inter.RunAsync();
+                    }
                 }
                 else
                 {
@@ -800,6 +812,7 @@ namespace Console
 
 
                     btn_submit.PerformClick(); // trigger the button click event
+                    tb_input1.Clear();
                     isUser = true;
                 }
 
