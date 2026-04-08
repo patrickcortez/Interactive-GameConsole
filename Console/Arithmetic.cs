@@ -99,21 +99,10 @@ namespace Console
                     tokens.Add(new Tokens(MathTypes.Plus));
                     advance(); // always advance after its not a digit
                 }
-                else if (pdata[pos] == '-')
+                else if (pdata[pos] == '-') // subtraction, removed unnecessary negative number handling, as we already handle it in parsebase() -_-
                 {
-
-                    if (tokens[pos-1].type == MathTypes.LPar || // for negative numbers: (-n,n * -n,n + -n or n - -n)
-                    tokens[pos-1].type == MathTypes.Minus ||
-                    tokens[pos-1].type == MathTypes.Plus ||
-                    tokens[pos-1].type == MathTypes.Minus)
-                    {
-                        tokens.Add(new Tokens(MathTypes.Number, ReadNumbers()));
-                    }
-                    else // if finally its not negative then we add the minus sign as a token.
-                    {
                         tokens.Add(new Tokens(MathTypes.Minus));
                         advance();
-                    }
                 }
                 else if (pdata[pos] == '*') // multiplication
                 {
@@ -175,7 +164,7 @@ namespace Console
                 }
                 else
                 {
-                    valueR = valueL - valueR;
+                    valueL = valueL - valueR;
                 }
             }
 
@@ -190,7 +179,7 @@ namespace Console
             {
                 MathTypes ops = currentToken().type;
                 advance();
-                int valueR = ParseBase();
+                int valueR = ParsePower();
 
                 if(ops == MathTypes.Multiply)
                 {
@@ -205,7 +194,7 @@ namespace Console
             return valueL;
         }
 
-        private int ParsePower()
+        private int ParsePower() // power handler
         {
             int valueL = ParseBase();
 
@@ -213,7 +202,7 @@ namespace Console
             {
                 MathTypes ops = currentToken().type;
                 advance();
-                int valueR = ParseBase();
+                int valueR = ParsePower(); //exponent
 
                 if(ops == MathTypes.Power)
                 {
