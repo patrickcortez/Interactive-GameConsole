@@ -4,7 +4,7 @@
 It's sole purpose is to navigate and manage your file system with its basic
 built-in Command-Line interface.
 
-**CE** has a-lot of built-in commands: `current`,`change`,`create`,`copy`,`clear`,`delete`,`echo`,`exit`,`export`,`help`,`list`,`move`,`edit`,`view`,`run`.
+**CE** has a-lot of built-in commands: `current`,`change`,`create`,`copy`,`clear`,`delete`,`echo`,`exit`,`export`,`help`,`list`,`move`,`edit`,`view`,`run`,`math`.
 
 With those commands, you can freely navigate and manage your File-System with ease.
 **CE** also has other features like:
@@ -22,7 +22,7 @@ It has *Brace Matching* and Recursive Copying. Which would help improve the CLI 
 it has its own *Text Editor*, *Directory View* and *Image Viewer*, so you can edit text files, View current directory in real time and view images instantly 
 while using **Console Explorer**.
 
-Finally it has its own interpreter, right now its just basic: input/output and variable decleration with *<filename>.csc* scripts.
+Finally it has its own interpreter and Arithmetic handler with `math` command, right now its just basic: input/output and variable decleration with *<filename>.csc* scripts.
 
 
 
