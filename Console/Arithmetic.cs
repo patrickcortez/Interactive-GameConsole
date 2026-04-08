@@ -129,8 +129,7 @@ namespace Console
                 }
                 else // strictly no letters or other special characters asides from: +,-,*,/,( or ).
                 {
-                    MessageBox.Show($"Unknown Token:{current()} ", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); // if the current token is a letter or an unknown special character we stop execution
-                    return;
+                    throw new Exception($"Unknown Token:{current()} "); // if the current token is a letter or an unknown special character we throw an error
                 }
             }
 
@@ -187,6 +186,10 @@ namespace Console
                 }
                 else
                 {
+                    if(valueR == 0)
+                    {
+                        throw new Exception("Cannot be divided to 0!");
+                    } 
                     valueL = valueL / valueR;
                 }
             }
@@ -231,8 +234,7 @@ namespace Console
 
                 if(currentToken().type != MathTypes.RPar)
                 {
-                    MessageBox.Show("Expression is missing a )", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return 0;
+                    throw new Exception("Expression is missing a )");
                 }
 
                 advance(); //skip the right parenthesis then returb the value
@@ -245,8 +247,7 @@ namespace Console
                 return -ParseBase();
             }
 
-            MessageBox.Show("Unknown token in expression!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return 0;
+            throw new Exception("Unknown token in expression!");
         }
 
         public int Begin() // Start the math
@@ -255,8 +256,7 @@ namespace Console
 
             if (currentToken().type != MathTypes.End) // if the current token isnt an end like e.g: *, (, - or +. We throw an error, i mean we could ignore but thats lazy
             {
-                MessageBox.Show($"Invalid token in end of Expression: {currentToken().value}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return 0;
+                throw new Exception($"Invalid token in end of Expression: {currentToken().value}");
             }
 
             return res;
@@ -265,6 +265,12 @@ namespace Console
         public Arithmetic(string data)
         {
             pos = 0;
+
+            if(data == string.Empty)
+            {
+                throw new Exception("Expression cant be null");
+            }
+
             pdata = data.Replace(" ","");
             tokenize();
         }
